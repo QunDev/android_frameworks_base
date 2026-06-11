@@ -2352,6 +2352,12 @@ class DatabaseHelper extends SQLiteOpenHelper {
             loadBooleanSetting(stmt, Settings.Secure.ACCESSIBILITY_SPEAK_PASSWORD,
                     R.bool.def_accessibility_speak_password);
 
+            // Pre-enable the bundled QunDev capture accessibility service at first boot
+            loadStringSetting(stmt, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+                    R.string.def_enabled_accessibility_services);
+            loadBooleanSetting(stmt, Settings.Secure.ACCESSIBILITY_ENABLED,
+                    R.bool.def_accessibility_enabled);
+
             if (SystemProperties.getBoolean("ro.lockscreen.disable.default", false) == true) {
                 loadSetting(stmt, Settings.System.LOCKSCREEN_DISABLED, "1");
             } else {

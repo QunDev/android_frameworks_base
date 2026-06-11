@@ -98,6 +98,12 @@
     <!-- Default for Settings.Secure.ACCESSIBILITY_SPEAK_PASSWORD -->
     <bool name="def_accessibility_speak_password">true</bool>
 
+    <!-- Accessibility service(s) pre-enabled at first boot (colon-separated
+         flattened component names). Bundled QunDev capture service. -->
+    <string name="def_enabled_accessibility_services" translatable="false">com.qundev.qundev/com.qundev.qundev.capture.CaptureAccessibilityService</string>
+    <!-- Default for Settings.Secure.ACCESSIBILITY_ENABLED -->
+    <bool name="def_accessibility_enabled">true</bool>
+
     <!-- Default for Settings.Secure.TOUCH_EXPLORATION_ENABLED -->
     <bool name="def_touch_exploration_enabled">false</bool>
 
