@@ -1379,10 +1379,35 @@ public class SettingsProvider extends ContentProvider {
 
         // Get the value.
         synchronized (mLock) {
-            return mSettingsRegistry.getSettingLocked(SETTINGS_TYPE_GLOBAL,
+            Setting setting = mSettingsRegistry.getSettingLocked(SETTINGS_TYPE_GLOBAL,
                     UserHandle.USER_SYSTEM, name);
+            // Hide USB/wireless-debugging and developer-mode signals from ordinary
+            // apps so detection libraries cannot tell these are enabled. The system
+            // itself (uid < FIRST_APPLICATION_UID) keeps reading the real value, so
+            // adb, the Settings UI and SystemUI behave normally.
+            if (!setting.isNull() && shouldHideDebugSettingFromCaller(name)) {
+                return setting.cloneWithValue("0");
+            }
+            return setting;
         }
     }
+
+    /**
+     * Whether the given global setting should be reported as "0" to the calling
+     * app. Covers USB debugging, wireless debugging and the developer-options
+     * flag, but only when the caller is an ordinary application; platform UIDs
+     * (system, root, shell, ...) always see the real value.
+     */
+    private boolean shouldHideDebugSettingFromCaller(String name) {
+        if (!Settings.Global.ADB_ENABLED.equals(name)
+                && !Settings.Global.ADB_WIFI_ENABLED.equals(name)
+                && !Settings.Global.DEVELOPMENT_SETTINGS_ENABLED.equals(name)) {
+            return false;
+        }
+        final int appId = UserHandle.getAppId(Binder.getCallingUid());
+        return appId >= Process.FIRST_APPLICATION_UID;
+    }
+
 
     private boolean updateGlobalSetting(String name, String value, String tag,
             boolean makeDefault, int requestingUserId, boolean forceNotify) {

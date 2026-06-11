@@ -1252,6 +1252,19 @@ final class SettingsState {
             isValuePreservedInRestore = other.isValuePreservedInRestore;
         }
 
+        /**
+         * Returns a copy of this setting with an overridden value. Used to hand a
+         * masked value to untrusted callers without mutating the stored setting.
+         * The clone shares the enclosing table's generation key (see getKey()), so
+         * client-side caching stays coherent.
+         */
+        public Setting cloneWithValue(String newValue) {
+            Setting clone = new Setting(this);
+            clone.value = newValue;
+            clone.defaultValue = newValue;
+            return clone;
+        }
+
         public Setting(String name, String value, boolean makeDefault, String packageName,
                 String tag) {
             this(name, value, makeDefault, packageName, tag, false);
